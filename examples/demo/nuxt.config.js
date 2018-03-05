@@ -10,7 +10,7 @@ module.exports = {
   build: {
     extractCSS: true
   },
-  serverMiddleware: ['../api/auth'],
+  serverMiddleware: ['../api'],
   modules: ['bootstrap-vue/nuxt', '@nuxtjs/axios', '@@'],
   axios: {
     proxy: true
