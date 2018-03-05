@@ -24,7 +24,7 @@
   "scripts": {
     "heroku-postbuild": "nuxt build examples/demo",
     "start": "nuxt start examples/demo",
-    "dev": "nuxt examples/demo",
+    "dev": "nodemon --watch api --exec \"nuxt examples/demo\"",
     "lint": "eslint lib src test",
     "lint-fix": "eslint --fix lib src test",
     "test": "npm run lint && jest",
@@ -70,6 +70,9 @@
     "jsdom": "latest",
     "nuxt": "latest",
     "nuxt-class-component": "^1.2.0",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
     "puppeteer": "^1.0.0",
     "standard-version": "latest"
   }
