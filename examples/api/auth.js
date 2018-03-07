@@ -16,22 +16,15 @@ app.use(
   jwt({
     secret: 'dummy'
   }).unless({
-    path: '/api/auth/login'
+    path: [
+      '/api/auth/login',
+      '/api/pro/login'
+    ]
   })
 )
 
-// -- Routes --
-
-// [POST] /login
-app.post('/login', (req, res, next) => {
-  const { username, password } = req.body
-  const valid = username.length && password === '123'
-
-  if (!valid) {
-    throw new Error('Invalid username or password')
-  }
-
-  const accessToken = jsonwebtoken.sign(
+const generateToken = (username) => {
+  return jsonwebtoken.sign(
     {
       username,
       picture: 'https://github.com/nuxt.png',
@@ -40,6 +33,20 @@ app.post('/login', (req, res, next) => {
     },
     'dummy'
   )
+}
+
+// -- Auth Routes --
+const auth = express.Router()
+// [POST] /login
+auth.post('/login', (req, res, next) => {
+  const { username, password } = req.body
+  const valid = username.length && password === '123'
+
+  if (!valid) {
+    throw new Error('Invalid username or password')
+  }
+
+  const accessToken = generateToken(username)
 
   res.json({
     token: {
@@ -49,14 +56,47 @@ app.post('/login', (req, res, next) => {
 })
 
 // [GET] /user
-app.get('/user', (req, res, next) => {
+auth.get('/user', (req, res, next) => {
   res.json({ user: req.user })
 })
 
 // [POST] /logout
-app.post('/logout', (req, res, next) => {
+auth.post('/logout', (req, res, next) => {
   res.json({ status: 'OK' })
 })
+
+// -- Pro Routes --
+const pro = express.Router()
+// [POST] /login
+pro.post('/login', (req, res, next) => {
+  const { username, password } = req.body
+  const valid = username.length && password === '123'
+
+  if (!valid) {
+    throw new Error('Invalid username or password')
+  }
+
+  const accessToken = generateToken(username)
+
+  res.json({
+    token: {
+      accessToken
+    }
+  })
+})
+
+// [GET] /user
+pro.get('/user', (req, res, next) => {
+  res.json({ user: req.user })
+})
+
+// [POST] /logout
+pro.post('/logout', (req, res, next) => {
+  res.json({ status: 'OK' })
+})
+
+app.use('/pro', pro)
+app.use('/auth', auth)
 
 // Error handler
 app.use((err, req, res, next) => {
@@ -66,6 +106,6 @@ app.use((err, req, res, next) => {
 
 // -- export app --
 module.exports = {
-  path: '/api/auth',
+  path: '/api',
   handler: app
 }
